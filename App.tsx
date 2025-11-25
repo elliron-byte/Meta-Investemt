@@ -194,6 +194,7 @@ const App: React.FC = () => {
               txnId: txnId
           });
           setShowRepaymentPage(false);
+          setShowRechargeRecords(true); // Redirect to recharge records
           handleShowToast('Recharge submitted for review!', 'success');
       }
   };
@@ -344,7 +345,7 @@ const App: React.FC = () => {
     <div className="bg-gray-100 min-h-screen font-sans text-gray-900 relative">
       {/* Modals and Full Screen Pages */}
       {showManageWallets && (
-        <div className="fixed inset-0 z-30 bg-white">
+        <div className="fixed inset-0 z-30 bg-white overflow-y-auto">
            <ManageWalletsPage 
               user={currentUser} 
               onClose={() => setShowManageWallets(false)} 
@@ -355,7 +356,7 @@ const App: React.FC = () => {
               }}
            />
            {showAddWallet && (
-               <div className="fixed inset-0 z-40 bg-white">
+               <div className="fixed inset-0 z-40 bg-white overflow-y-auto">
                    <AddWalletPage onClose={() => setShowAddWallet(false)} onAddWallet={handleAddWallet} />
                </div>
            )}
@@ -363,7 +364,7 @@ const App: React.FC = () => {
       )}
 
       {showWithdrawalPage && (
-          <div className="fixed inset-0 z-20 bg-white">
+          <div className="fixed inset-0 z-20 bg-white overflow-y-auto">
               <WithdrawalPage 
                 user={currentUser} 
                 onClose={() => setShowWithdrawalPage(false)} 
@@ -386,25 +387,25 @@ const App: React.FC = () => {
       )}
 
       {showRepaymentPage && (
-        <div className="fixed inset-0 z-50 bg-white">
+        <div className="fixed inset-0 z-50 bg-white overflow-y-auto">
             <RepaymentPage onClose={() => setShowRepaymentPage(false)} amount={currentRechargeAmount} onShowToast={handleShowToast} onSubmit={handleRepaymentSubmit} />
         </div>
       )}
       
       {showRechargePage && (
-          <div className="fixed inset-0 z-20 bg-white">
+          <div className="fixed inset-0 z-20 bg-white overflow-y-auto">
               <RechargePage onClose={() => setShowRechargePage(false)} onDeposit={handleDeposit} onShowToast={handleShowToast} />
           </div>
       )}
 
       {showRechargeRecords && (
-          <div className="fixed inset-0 z-20 bg-white">
+          <div className="fixed inset-0 z-20 bg-white overflow-y-auto">
               <RechargeRecordsPage onClose={() => setShowRechargeRecords(false)} user={currentUser} />
           </div>
       )}
 
       {showWithdrawalRecords && (
-          <div className="fixed inset-0 z-20 bg-white">
+          <div className="fixed inset-0 z-20 bg-white overflow-y-auto">
               <WithdrawalRecordsPage onClose={() => setShowWithdrawalRecords(false)} user={currentUser} />
           </div>
       )}
@@ -416,7 +417,7 @@ const App: React.FC = () => {
       )}
 
       {showBonusCodePage && (
-          <div className="fixed inset-0 z-50 bg-white">
+          <div className="fixed inset-0 z-50 bg-white overflow-y-auto">
               <BonusCodePage onClose={() => setShowBonusCodePage(false)} onRedeem={handleRedeemBonus} />
           </div>
       )}

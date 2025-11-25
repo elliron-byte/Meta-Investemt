@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { getUsers, updateUser } from './storageService';
 import type { User } from './storageService';
 import FundAccountModal from './FundAccountModal';
@@ -18,7 +18,8 @@ const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onLogout }) => 
     const [adminView, setAdminView] = useState<'users' | 'recharges'>('users');
     const [refreshKey, setRefreshKey] = useState(0);
     const [isRefreshing, setIsRefreshing] = useState(false);
-
+    
+    // Fetch users whenever refreshKey changes
     useEffect(() => {
         const fetchUsers = async () => {
             const data = await getUsers();
@@ -27,6 +28,7 @@ const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onLogout }) => 
         fetchUsers();
     }, [refreshKey]);
 
+    // Setup auto-refresh interval
     useEffect(() => {
         const intervalId = setInterval(() => {
             handleRefresh();
