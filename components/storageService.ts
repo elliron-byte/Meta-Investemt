@@ -1,3 +1,4 @@
+
 import { supabase } from './supabaseClient';
 import type { Product } from './ProductDetailsPage';
 
@@ -117,7 +118,7 @@ export const addUser = async (newUser: { mobile: string; password: string; invit
   const normalizedMobile = normalizeMobile(newUser.mobile);
   
   // Check existence
-  const { data: existing } = await supabase.from('users').select('mobile').eq('mobile', normalizedMobile).single();
+  const { data: existing } = await supabase.from('users').select('mobile').eq('mobile', normalizedMobile).maybeSingle();
   if (existing) return false;
 
   const referralCode = await generateUniqueReferralCode();
@@ -148,7 +149,7 @@ export const findUser = async (credentials: { mobile: string; password: string }
     .select('*')
     .eq('mobile', normalizedMobile)
     .eq('password', credentials.password)
-    .single();
+    .maybeSingle();
 
   if (error || !user) return null;
 
@@ -262,8 +263,19 @@ export const getRechargeRecords = async (): Promise<RechargeRecord[]> => {
   }));
 };
 
-export const addRechargeRecord = async (record: Omit<RechargeRecord, 'id' | 'status' | 'timestamp'>): Promise<void> => {
-  await supabase.from('recharge_records').insert({
+export const addRechargeRecord = async (record: Omit<RechargeRecord, 'id' | 'status' | 'timestamp'>): Promise<boolean> => {
+  // Check if TxnID exists
+  const { data: existing } = await supabase
+    .from('recharge_records')
+    .select('id')
+    .eq('txn_id', record.txnId)
+    .maybeSingle();
+
+  if (existing) {
+    return false; // Duplicate transaction ID
+  }
+
+  const { error } = await supabase.from('recharge_records').insert({
     id: `rec_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
     user_mobile: record.userMobile,
     amount: record.amount,
@@ -271,6 +283,12 @@ export const addRechargeRecord = async (record: Omit<RechargeRecord, 'id' | 'sta
     status: 'pending',
     timestamp: Date.now()
   });
+
+  if (error) {
+    console.error("Error adding recharge record:", error);
+    return false;
+  }
+  return true;
 };
 
 export const updateRechargeRecord = async (updatedRecord: RechargeRecord): Promise<void> => {

@@ -188,14 +188,23 @@ const App: React.FC = () => {
 
   const handleRepaymentSubmit = async (txnId: string) => {
       if (currentUser) {
-          await addRechargeRecord({
-              userMobile: currentUser.mobile,
-              amount: currentRechargeAmount,
-              txnId: txnId
-          });
-          setShowRepaymentPage(false);
-          setShowRechargeRecords(true); // Redirect to recharge records
-          handleShowToast('Recharge submitted for review!', 'success');
+          try {
+            const success = await addRechargeRecord({
+                userMobile: currentUser.mobile,
+                amount: currentRechargeAmount,
+                txnId: txnId
+            });
+            
+            if (success) {
+                setShowRepaymentPage(false);
+                setShowRechargeRecords(true); // Redirect to recharge records
+                handleShowToast('Recharge submitted for review!', 'success');
+            } else {
+                handleShowToast('Transaction ID has already been used!', 'error');
+            }
+          } catch (e) {
+              handleShowToast('An error occurred. Please try again.', 'error');
+          }
       }
   };
 
