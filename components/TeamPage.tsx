@@ -16,7 +16,7 @@ const TeamPage: React.FC<TeamPageProps> = ({ user, onShowToast }) => {
   };
 
   const referralCode = user?.referralCode || '...';
-  const referralLink = `https://invest-ment-me-ta14258643.netlify.app/?ref=${referralCode}`;
+  const referralLink = `https://meta-investemt.vercel.app/?ref=${referralCode}`;
   const referralCount = user?.referrals?.length || 0;
   const totalIncome = user?.referralIncome || 0;
 

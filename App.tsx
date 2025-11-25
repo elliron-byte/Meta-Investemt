@@ -69,6 +69,7 @@ const App: React.FC = () => {
   const [showAddWallet, setShowAddWallet] = useState(false);
   const [selectedWithdrawalWallet, setSelectedWithdrawalWallet] = useState<Wallet | null>(null);
   const [initialInvitationCode, setInitialInvitationCode] = useState('');
+  const [isLoginLoading, setIsLoginLoading] = useState(false);
 
   useEffect(() => {
     initializeStorage();
@@ -105,6 +106,7 @@ const App: React.FC = () => {
   }
 
   const handleLogin = async (credentials: { mobile: string; password: string }) => {
+    setIsLoginLoading(true);
     try {
       const user = await findUser(credentials);
       if (user) {
@@ -118,6 +120,8 @@ const App: React.FC = () => {
     } catch (error) {
        console.error(error);
        setLoginError('An error occurred. Please try again.');
+    } finally {
+      setIsLoginLoading(false);
     }
   };
 
@@ -302,6 +306,7 @@ const App: React.FC = () => {
                 onLogin={handleLogin} 
                 error={loginError}
                 onShowToast={handleShowToast}
+                isLoading={isLoginLoading}
             />
              {showToast && <Toast message={toastMessage} type={toastType} onClose={() => setShowToast(false)} />}
         </>
@@ -371,7 +376,7 @@ const App: React.FC = () => {
       )}
 
       {selectedProduct && (
-        <div className="fixed inset-0 z-50 bg-white">
+        <div className="fixed inset-0 z-50 bg-white overflow-y-auto">
           <ProductDetailsPage 
             product={selectedProduct} 
             onClose={() => setSelectedProduct(null)} 
@@ -405,7 +410,7 @@ const App: React.FC = () => {
       )}
 
       {showCustomerService && (
-          <div className="fixed inset-0 z-50 bg-white">
+          <div className="fixed inset-0 z-50 bg-white overflow-y-auto">
               <CustomerServicePage onClose={() => setShowCustomerService(false)} />
           </div>
       )}

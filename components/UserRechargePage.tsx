@@ -3,7 +3,11 @@ import React, { useState, useEffect } from 'react';
 import { getRechargeRecords, updateRechargeRecord, getUsers, updateUser } from './storageService';
 import type { RechargeRecord, User } from './storageService';
 
-const UserRechargePage: React.FC = () => {
+interface UserRechargePageProps {
+    refreshTrigger: number;
+}
+
+const UserRechargePage: React.FC<UserRechargePageProps> = ({ refreshTrigger }) => {
     const [records, setRecords] = useState<RechargeRecord[]>([]);
     const [activeTab, setActiveTab] = useState<'pending' | 'all'>('pending');
     const [searchTerm, setSearchTerm] = useState('');
@@ -15,7 +19,7 @@ const UserRechargePage: React.FC = () => {
 
     useEffect(() => {
         fetchRecords();
-    }, []);
+    }, [refreshTrigger]);
     
     const handleApprove = async (record: RechargeRecord) => {
         const users = await getUsers();

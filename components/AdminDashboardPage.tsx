@@ -27,6 +27,14 @@ const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onLogout }) => 
         fetchUsers();
     }, [refreshKey]);
 
+    useEffect(() => {
+        const intervalId = setInterval(() => {
+            handleRefresh();
+        }, 10000); // Auto-refresh every 10 seconds
+
+        return () => clearInterval(intervalId);
+    }, []);
+
     const handleRefresh = () => {
         setIsRefreshing(true);
         setRefreshKey(prevKey => prevKey + 1);
@@ -159,7 +167,7 @@ const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onLogout }) => 
                 </>
             )}
 
-            {adminView === 'recharges' && <UserRechargePage key={refreshKey} />}
+            {adminView === 'recharges' && <UserRechargePage refreshTrigger={refreshKey} />}
             
             <FundAccountModal 
                 isOpen={isFundModalOpen}
