@@ -131,10 +131,10 @@ const RepaymentPage: React.FC<RepaymentPageProps> = ({ onClose, amount, onShowTo
                             <img src="https://iili.io/fFj53uI.png" alt="MoMo Pay" className="w-10 h-10 mr-2 flex-shrink-0 object-contain rounded-md" />
                             <div>
                                 <p className="text-xs text-gray-500">MoMo Pay</p>
-                                <p className="font-bold text-lg text-gray-800">024 132 1010</p>
+                                <p className="font-bold text-lg text-gray-800">020 719 2366</p>
                             </div>
                         </div>
-                        <button onClick={() => handleCopy('024 132 1010')} className="bg-teal-100 text-teal-600 font-semibold px-3 py-1.5 rounded text-sm flex items-center space-x-1">
+                        <button onClick={() => handleCopy('020 719 2366')} className="bg-teal-100 text-teal-600 font-semibold px-3 py-1.5 rounded text-sm flex items-center space-x-1">
                             <CopyIcon className="w-4 h-4" />
                             <span>Copy</span>
                         </button>

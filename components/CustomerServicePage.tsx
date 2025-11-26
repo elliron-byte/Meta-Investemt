@@ -55,7 +55,12 @@ const CustomerServicePage: React.FC<CustomerServicePageProps> = ({ onClose }) =>
           />
         </div>
 
-        <a href="#" onClick={(e) => e.preventDefault()} className="flex items-center p-4 bg-white rounded-lg shadow-sm text-left">
+        <a 
+            href="https://t.me/Meta_Customer_Service" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            className="flex items-center p-4 bg-white rounded-lg shadow-sm text-left"
+        >
           <img src={telegramImage} alt="Telegram" className="w-12 h-12 mr-4 rounded-full" />
           <div>
             <p className="font-bold text-gray-800">Telegram</p>
