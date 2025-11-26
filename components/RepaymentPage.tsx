@@ -78,7 +78,7 @@ const RepaymentPage: React.FC<RepaymentPageProps> = ({ onClose, amount, onShowTo
             <main className="flex-grow overflow-y-auto p-4 space-y-4">
                 <div className="bg-[#FDF6E4] rounded-lg p-4">
                     <h3 className="font-bold text-sm mb-2">Important Reminder</h3>
-                    <p className="text-xs mb-3">When you have completed the payment, please backfill the Txn ID (11 or 16 digits) here from MoMo pay or Vodafone (Telecel Play Ghana) such as:</p>
+                    <p className="text-xs mb-3">When you have completed the payment, please backfill the Txn ID (11 or 16 digits) here from MoMo pay or Telecel such as:</p>
                     <div className="relative h-40">
                         <button onClick={prevSlide} className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/20 text-white p-1 rounded-full z-10">
                             <ChevronLeftIcon className="w-5 h-5" />

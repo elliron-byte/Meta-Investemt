@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 
 interface EWalletModalProps {
@@ -43,7 +44,7 @@ const EWalletModal: React.FC<EWalletModalProps> = ({ onClose, onConfirm, onShowT
             >
               <option value="">Select Operator</option>
               <option value="MTN">MTN Mobile Money</option>
-              <option value="VODAFONE">Vodafone Cash (Telecel)</option>
+              <option value="TELECEL">Telecel Cash</option>
               <option value="AIRTELTIGO">AirtelTigo Money</option>
             </select>
           </div>

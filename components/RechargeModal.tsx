@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { ThumbsUpIcon } from './Icons';
 
@@ -32,7 +33,7 @@ const RechargeModal: React.FC<RechargeModalProps> = ({ isOpen, onClose, onConfir
         <div className="space-y-3 text-sm text-gray-700">
           <div className="bg-red-100 text-red-800 p-3 rounded-lg flex items-start">
             <ThumbsUpIcon className="w-6 h-6 mr-2 mt-0.5 flex-shrink-0 text-red-500" />
-            <p className="font-semibold">Please use MoMo pay or Vodafone (Telecel Play Ghana) for payment</p>
+            <p className="font-semibold">Please use MoMo pay or Telecel for payment</p>
           </div>
           <p>After completing the repayment, please <span className="text-teal-500 font-semibold">backfill</span> your Transaction ID (Txn ID 11 or 16 digits).</p>
           <p className="text-teal-500">If you do not backfill, your repayment will not be review quickly.</p>

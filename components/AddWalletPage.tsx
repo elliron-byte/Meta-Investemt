@@ -9,7 +9,7 @@ interface AddWalletPageProps {
 }
 
 const AddWalletPage: React.FC<AddWalletPageProps> = ({ onClose, onAddWallet }) => {
-  const [walletType, setWalletType] = useState<'MTN' | 'VODAFONE' | 'AIRTELTIGO' | ''>('');
+  const [walletType, setWalletType] = useState<'MTN' | 'TELECEL' | 'AIRTELTIGO' | ''>('');
   const [name, setName] = useState('');
   const [accountNumber, setAccountNumber] = useState('');
 
@@ -49,7 +49,7 @@ const AddWalletPage: React.FC<AddWalletPageProps> = ({ onClose, onAddWallet }) =
           >
             <option value="" disabled>Please select</option>
             <option value="MTN">MTN</option>
-            <option value="VODAFONE">Vodafone</option>
+            <option value="TELECEL">Telecel</option>
             <option value="AIRTELTIGO">AirtelTigo</option>
           </select>
         </div>

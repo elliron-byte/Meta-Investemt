@@ -6,7 +6,7 @@ import type { Product } from './ProductDetailsPage';
 
 export type Wallet = {
   id?: number;
-  type: 'MTN' | 'VODAFONE' | 'AIRTELTIGO';
+  type: 'MTN' | 'TELECEL' | 'AIRTELTIGO';
   name: string;
   accountNumber: string;
 };
