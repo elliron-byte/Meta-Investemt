@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { ArrowLeftIcon } from './Icons';
 
 export type Product = {
@@ -13,16 +13,25 @@ export type Product = {
 interface ProductDetailsPageProps {
   product: Product;
   onClose: () => void;
-  onConfirm: (product: Product) => void;
+  onConfirm: (product: Product) => Promise<void>;
 }
 
 const ProductDetailsPage: React.FC<ProductDetailsPageProps> = ({ product, onClose, onConfirm }) => {
   const duration = 30; // As requested
+  const [isProcessing, setIsProcessing] = useState(false);
+
+  const handleConfirm = async () => {
+      setIsProcessing(true);
+      await onConfirm(product);
+      // We don't necessarily need to set false here as the parent will likely unmount this component on success,
+      // but it's safe to do if the parent logic handles errors without unmounting.
+      setIsProcessing(false);
+  };
 
   return (
     <div className="bg-gray-100 min-h-screen">
       <header className="bg-white flex items-center p-4 border-b sticky top-0 z-10">
-        <button onClick={onClose} className="p-2 -ml-2">
+        <button onClick={onClose} className="p-2 -ml-2" disabled={isProcessing}>
           <ArrowLeftIcon className="w-6 h-6 text-gray-800" />
         </button>
         <h1 className="text-lg font-semibold text-gray-800 text-center flex-grow -ml-6">Details</h1>
@@ -61,9 +70,10 @@ const ProductDetailsPage: React.FC<ProductDetailsPageProps> = ({ product, onClos
 
         <div className="pt-4">
             <button 
-                onClick={() => onConfirm(product)}
-                className="w-full bg-gradient-to-r from-[#2CACFF] to-[#0066FF] text-white font-bold py-3.5 rounded-lg shadow-md hover:from-[#0066FF] hover:to-[#004bb5] transition-colors">
-                Confirm
+                onClick={handleConfirm}
+                disabled={isProcessing}
+                className={`w-full text-white font-bold py-3.5 rounded-lg shadow-md transition-colors ${isProcessing ? 'bg-gray-400 cursor-wait' : 'bg-gradient-to-r from-[#2CACFF] to-[#0066FF] hover:from-[#0066FF] hover:to-[#004bb5]'}`}>
+                {isProcessing ? 'Processing...' : 'Confirm'}
             </button>
         </div>
       </main>

@@ -25,7 +25,8 @@ import {
   incrementBonusCodeUses, 
   addInvestment,
   addWallet,
-  addWithdrawal
+  addWithdrawal,
+  purchaseProduct // Imported atomic purchase function
 } from './components/storageService';
 import type { User, Wallet } from './components/storageService';
 import Toast from './components/Toast';
@@ -219,23 +220,26 @@ const App: React.FC = () => {
   const handleProductConfirm = async (product: Product) => {
     if (!currentUser) return;
     
-    if (currentUser.balance >= product.price) {
-        const updatedUser = { ...currentUser, balance: currentUser.balance - product.price };
-        await updateUser(updatedUser);
-        
-        await addInvestment(currentUser.mobile, {
-            productId: product.vip,
-            purchaseTimestamp: Date.now(),
-            creditsReceived: 0,
-            product: product
-        });
-        
-        await refreshUserData();
-        
-        setSelectedProduct(null);
-        handleShowToast(`Successfully purchased VIP${product.vip}!`, 'success');
-    } else {
+    // Optimistic UI check to prevent unnecessary API calls
+    if (currentUser.balance < product.price) {
         handleShowToast('Insufficient balance!', 'error');
+        return;
+    }
+
+    try {
+        // Use the secure atomic purchase function
+        const result = await purchaseProduct(currentUser.mobile, product);
+
+        if (result.success) {
+            await refreshUserData();
+            setSelectedProduct(null);
+            handleShowToast(`Successfully purchased VIP${product.vip}!`, 'success');
+        } else {
+            handleShowToast(result.message, 'error');
+        }
+    } catch (e) {
+        console.error(e);
+        handleShowToast('An error occurred. Please try again.', 'error');
     }
   };
 

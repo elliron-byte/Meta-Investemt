@@ -85,20 +85,16 @@ export const initializeStorage = async (): Promise<void> => {
 };
 
 export const getUsers = async (): Promise<User[]> => {
-  // This fetches ALL users, mainly for admin. 
-  // Note: Deep fetching nested relations for all users is heavy, simplified for list view.
+  // Fetch users with their related data for the Admin Dashboard
   const { data: users, error } = await supabase
     .from('users')
-    .select('*');
+    .select('*, investments(*), wallets(*), withdrawals(*)');
     
   if (error) {
     console.error('Error fetching users:', error);
     return [];
   }
 
-  // Manually mapping snake_case DB fields to camelCase TS objects
-  // Note: For performance in AdminDashboard, we might not fetch all sub-tables immediately
-  // unless required. Returning basic info here.
   return users.map((u: any) => ({
     mobile: u.mobile,
     password: u.password,
@@ -107,10 +103,28 @@ export const getUsers = async (): Promise<User[]> => {
     bonusRedeemed: u.bonus_redeemed,
     referredBy: u.referred_by,
     referralIncome: u.referral_income,
-    investments: [], // Populated only if needed specifically
-    wallets: [],
-    withdrawals: [],
-    referrals: [] // Would require separate query
+    // Map relations and handle potential nulls if the relation return structure varies
+    investments: (u.investments || []).map((i: any) => ({
+      id: i.id,
+      productId: i.product_id,
+      purchaseTimestamp: i.purchase_timestamp,
+      creditsReceived: i.credits_received,
+      product: i.product_json
+    })),
+    wallets: (u.wallets || []).map((w: any) => ({
+      id: w.id,
+      type: w.type,
+      name: w.name,
+      accountNumber: w.account_number
+    })),
+    withdrawals: (u.withdrawals || []).map((w: any) => ({
+      id: w.id,
+      amount: w.amount,
+      date: w.date,
+      status: w.status,
+      wallet: w.wallet_json
+    })),
+    referrals: [] // Still expensive to calc recursive referrals here, leaving empty for list view
   }));
 };
 
@@ -208,6 +222,31 @@ export const updateUser = async (updatedUser: User): Promise<void> => {
     bonus_redeemed: updatedUser.bonusRedeemed,
     referral_income: updatedUser.referralIncome
   }).eq('mobile', updatedUser.mobile);
+};
+
+// Secure Atomic Purchase Transaction
+export const purchaseProduct = async (mobile: string, product: Product): Promise<{ success: boolean; message: string }> => {
+  // RPC call to the PostgreSQL function 'purchase_product'
+  // This function MUST be created in Supabase SQL editor for this to work.
+  const { data, error } = await supabase.rpc('purchase_product', {
+    p_user_mobile: mobile,
+    p_product_id: product.vip,
+    p_product_price: product.price,
+    p_product_json: product
+  });
+
+  if (error) {
+    console.error('Purchase error:', error);
+    // Return a generic error if the RPC fails (e.g., function not found, network error)
+    return { success: false, message: 'Transaction failed. Please try again.' };
+  }
+
+  // The RPC returns true (success) or false (insufficient funds/failure)
+  if (data === true) {
+    return { success: true, message: 'Purchase successful!' };
+  } else {
+    return { success: false, message: 'Insufficient balance or purchase failed.' };
+  }
 };
 
 // Specific Methods for Relations to avoid complex object diffing
