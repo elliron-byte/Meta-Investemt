@@ -354,3 +354,19 @@ export const incrementBonusCodeUses = async (code: string): Promise<void> => {
     await supabase.from('bonus_codes').update({ uses: data.uses + 1 }).eq('code', code);
   }
 };
+
+// Delete user functionality
+export const deleteUser = async (mobile: string): Promise<boolean> => {
+  const normalizedMobile = normalizeMobile(mobile);
+  
+  // We attempt to delete the user. 
+  // If Cascade delete is configured on FKs (which is typical for user_mobile), this deletes everything.
+  // If not, this might fail, but we'll try it.
+  const { error } = await supabase.from('users').delete().eq('mobile', normalizedMobile);
+  
+  if (error) {
+    console.error('Error deleting user:', error);
+    return false;
+  }
+  return true;
+};
