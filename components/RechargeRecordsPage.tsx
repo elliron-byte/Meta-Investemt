@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { ArrowLeftIcon } from './Icons';
-import { getRechargeRecords } from './storageService';
+import { subscribeToUserRechargeRecords } from './storageService';
 import type { User, RechargeRecord } from './storageService';
 
 interface RechargeRecordsPageProps {
@@ -14,14 +14,13 @@ const RechargeRecordsPage: React.FC<RechargeRecordsPageProps> = ({ onClose, user
   const [records, setRecords] = useState<RechargeRecord[]>([]);
 
   useEffect(() => {
-    const fetchRecords = async () => {
-        if (user) {
-            const allRecords = await getRechargeRecords();
-            const userRecords = allRecords.filter(rec => rec.userMobile === user.mobile);
-            setRecords(userRecords.sort((a, b) => b.timestamp - a.timestamp));
-        }
-    }
-    fetchRecords();
+    if (!user) return;
+
+    const unsubscribe = subscribeToUserRechargeRecords(user.mobile, (updatedRecords) => {
+        setRecords(updatedRecords);
+    });
+
+    return () => unsubscribe();
   }, [user]);
 
   const filteredRecords = records.filter(record => record.status === activeTab);

@@ -4,7 +4,7 @@ import { UserIcon, LockIcon, ArrowLeftIcon, ShieldCheckIcon, TicketIcon, MetaLog
 
 interface SignUpPageProps {
   onNavigateToLogin: () => void;
-  onSignUp: (newUser: { mobile: string; password: string; invitationCode: string }) => Promise<boolean>;
+  onSignUp: (newUser: { mobile: string; password: string; invitationCode: string }) => Promise<{ success: boolean; error?: string }>;
   initialInvitationCode?: string;
 }
 
@@ -64,10 +64,10 @@ const SignUpPage: React.FC<SignUpPageProps> = ({ onNavigateToLogin, onSignUp, in
 
     setIsSubmitting(true);
     try {
-      const success = await onSignUp({ mobile, password, invitationCode });
+      const result = await onSignUp({ mobile, password, invitationCode });
 
-      if (!success) {
-        setError('A user with this mobile number already exists.');
+      if (!result.success) {
+        setError(result.error || 'A user with this mobile number already exists.');
       }
     } catch (err) {
       setError('An error occurred during registration.');

@@ -195,6 +195,7 @@ const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onLogout }) => 
                                         </th>
                                         <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Mobile Number</th>
                                         <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Balance (GHS)</th>
+                                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Last Txn ID</th>
                                         <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Investments</th>
                                         <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Wallets</th>
                                         <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Actions</th>
@@ -214,6 +215,13 @@ const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onLogout }) => 
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-white">{user.mobile}</td>
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">{user.balance.toFixed(2)}</td>
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
+                                                    {user.lastTxnId ? (
+                                                        <span className="font-mono text-xs bg-gray-900 px-2 py-1 rounded text-blue-400">{user.lastTxnId}</span>
+                                                    ) : (
+                                                        <span className="text-gray-600">-</span>
+                                                    )}
+                                                </td>
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">{user.investments?.length || 0}</td>
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">{user.wallets?.length || 0}</td>
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">

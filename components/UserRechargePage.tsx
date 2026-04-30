@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { getRechargeRecords, updateRechargeRecord, getUsers, updateUser } from './storageService';
+import { subscribeToRechargeRecords, updateRechargeRecord, getUsers, updateUser } from './storageService';
 import type { RechargeRecord, User } from './storageService';
 
 interface UserRechargePageProps {
@@ -12,13 +12,12 @@ const UserRechargePage: React.FC<UserRechargePageProps> = ({ refreshTrigger }) =
     const [activeTab, setActiveTab] = useState<'pending' | 'all'>('pending');
     const [searchTerm, setSearchTerm] = useState('');
     
-    const fetchRecords = async () => {
-        const allRecords = await getRechargeRecords();
-        setRecords(allRecords.sort((a, b) => b.timestamp - a.timestamp));
-    };
-
     useEffect(() => {
-        fetchRecords();
+        const unsubscribe = subscribeToRechargeRecords((updatedRecords) => {
+            setRecords(updatedRecords);
+        });
+
+        return () => unsubscribe();
     }, [refreshTrigger]);
     
     const handleApprove = async (record: RechargeRecord) => {
@@ -38,14 +37,11 @@ const UserRechargePage: React.FC<UserRechargePageProps> = ({ refreshTrigger }) =
         
         const updatedRecord: RechargeRecord = { ...record, status: 'successful' };
         await updateRechargeRecord(updatedRecord);
-        
-        fetchRecords();
     };
     
     const handleReject = async (record: RechargeRecord) => {
         const updatedRecord: RechargeRecord = { ...record, status: 'failed' };
         await updateRechargeRecord(updatedRecord);
-        fetchRecords();
     };
 
     const recordsByTab = activeTab === 'all' 

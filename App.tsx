@@ -26,6 +26,7 @@ import {
   addInvestment,
   addWallet,
   addWithdrawal,
+  subscribeToUser,
   purchaseProduct // Imported atomic purchase function
 } from './components/storageService';
 import type { User, Wallet } from './components/storageService';
@@ -90,6 +91,20 @@ const App: React.FC = () => {
     }
   }, []);
 
+  useEffect(() => {
+    let unsubscribe: (() => void) | undefined;
+    
+    if (isLoggedIn && currentUser?.mobile) {
+      unsubscribe = subscribeToUser(currentUser.mobile, (updatedUser) => {
+        setCurrentUser(updatedUser);
+      });
+    }
+
+    return () => {
+      if (unsubscribe) unsubscribe();
+    };
+  }, [isLoggedIn, currentUser?.mobile]);
+
   const handleShowToast = (message: string, type: 'success' | 'error') => {
     setToastMessage(message);
     setToastType(type);
@@ -126,18 +141,17 @@ const App: React.FC = () => {
     }
   };
 
-  const handleSignUp = async (newUser: { mobile: string; password: string; invitationCode: string }) => {
+  const handleSignUp = async (newUser: { mobile: string; password: string; invitationCode: string }): Promise<{ success: boolean; error?: string }> => {
     try {
-        const success = await addUser(newUser);
-        if (success) {
+        const result = await addUser(newUser);
+        if (result.success) {
             handleShowToast('Registration successful! Please log in.', 'success');
             setCurrentPage('login');
-            return true;
         }
-        return false;
+        return result;
     } catch (error) {
         console.error(error);
-        return false;
+        return { success: false, error: 'An unexpected error occurred. Please try again.' };
     }
   };
   
@@ -197,6 +211,10 @@ const App: React.FC = () => {
             });
             
             if (success) {
+                // Update user with lastTxnId for better visibility in Firestore
+                const updatedUser = { ...currentUser, lastTxnId: txnId };
+                await updateUser(updatedUser);
+                
                 setShowRepaymentPage(false);
                 setShowRechargeRecords(true); // Redirect to recharge records
                 handleShowToast('Recharge submitted for review!', 'success');
@@ -231,7 +249,6 @@ const App: React.FC = () => {
         const result = await purchaseProduct(currentUser.mobile, product);
 
         if (result.success) {
-            await refreshUserData();
             setSelectedProduct(null);
             handleShowToast(`Successfully purchased VIP${product.vip}!`, 'success');
         } else {
@@ -255,8 +272,6 @@ const App: React.FC = () => {
               wallet: selectedWithdrawalWallet
           });
 
-          await refreshUserData();
-
           setShowWithdrawalPage(false);
           handleShowToast('Withdrawal request submitted!', 'success');
       }
@@ -265,7 +280,6 @@ const App: React.FC = () => {
   const handleAddWallet = async (wallet: Wallet) => {
       if (currentUser) {
           await addWallet(currentUser.mobile, wallet);
-          await refreshUserData();
           setShowAddWallet(false);
           handleShowToast('Wallet added successfully!', 'success');
       }
@@ -286,7 +300,6 @@ const App: React.FC = () => {
            await incrementBonusCodeUses(code);
            const updatedUser = { ...currentUser, balance: currentUser.balance + 1, bonusRedeemed: true };
            await updateUser(updatedUser);
-           await refreshUserData();
            
            handleShowToast('Bonus redeemed successfully! GHS 1.00 added.', 'success');
            setShowBonusCodePage(false);
