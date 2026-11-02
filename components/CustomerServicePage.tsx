@@ -56,7 +56,7 @@ const CustomerServicePage: React.FC<CustomerServicePageProps> = ({ onClose }) =>
         </div>
 
         <a 
-            href="https://t.me/Meta_Customer_Service" 
+            href="https://t.me/Meta_lnvestment" 
             target="_blank" 
             rel="noopener noreferrer" 
             className="flex items-center p-4 bg-white rounded-lg shadow-sm text-left"

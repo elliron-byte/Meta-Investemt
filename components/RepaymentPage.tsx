@@ -140,6 +140,16 @@ const RepaymentPage: React.FC<RepaymentPageProps> = ({ onClose, amount, onShowTo
                         </button>
                     </div>
                     <div className="flex items-center justify-between bg-white p-2 rounded-md">
+                        <div>
+                            <p className="text-xs text-gray-500">Name</p>
+                            <p className="font-bold text-sm sm:text-base text-gray-800">Name: PERRY KOBINA ESSUAH</p>
+                        </div>
+                        <button onClick={() => handleCopy('PERRY KOBINA ESSUAH')} className="bg-teal-100 text-teal-600 font-semibold px-3 py-1.5 rounded text-sm flex items-center space-x-1 flex-shrink-0">
+                            <CopyIcon className="w-4 h-4" />
+                            <span>Copy</span>
+                        </button>
+                    </div>
+                    <div className="flex items-center justify-between bg-white p-2 rounded-md">
                         <p className="font-bold text-gray-800">GHS {amount.toFixed(2)}</p>
                         <button onClick={() => handleCopy(amount.toFixed(2))} className="bg-teal-100 text-teal-600 font-semibold px-3 py-1.5 rounded text-sm flex items-center space-x-1">
                              <CopyIcon className="w-4 h-4" />
